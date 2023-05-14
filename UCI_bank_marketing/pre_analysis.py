@@ -10,7 +10,9 @@ import plotly.express as px
 # Read the data from the csv
 banking_data = pd.read_csv('./data/bank-additional-full.csv', sep=';')
 
+"""
 # Basic data description
+"""
 desc_data = banking_data.describe()
 for column in banking_data:
     print(f'Column_name: {column} \n'
