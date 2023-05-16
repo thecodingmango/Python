@@ -40,6 +40,28 @@ def histogram_plot(data, x, bins, label, title, y=None):
     return fig.show()
 
 
+def scatter_plot(data, x, title, y=None):
+    """Returns scatter plot"""
+
+    fig = px.scatter(data, x=x, y=y,
+                     title=title)
+
+    return fig.show()
+
+
+def line_plot(data, x, label, title, y=None):
+    """
+    Function to plot a histogram given Pandas dataframe
+    """
+    fig = px.line(data, x=x, y=y,
+                  title=title,
+                  labels={
+                      x: label
+                  })
+    fig.update_layout(bargap=0.2)
+    return fig.show()
+
+
 # Plotting histogram plots
 histogram_plot(banking_data, 'age', bins=30, label='Age of Client',
                title='Distribution of Age for Client Contacted by Bank')
@@ -56,13 +78,43 @@ histogram_plot(banking_data, 'campaign', bins=100, label='Number of Contact for 
 histogram_plot(banking_data, 'pdays', bins=100, label='Number of Days from the Previous Contact',
                title='Distribution of Number of Telephone Contacts')
 
-
 # Histogram of number of contact before the campaign
 histogram_plot(banking_data, 'previous', bins=10, label='Number of contact before the campaign',
                title='Distribution of Number of Telephone Contacts before the Campaign')
 
+# Histogram of employment variation rate
+histogram_plot(banking_data, 'emp.var.rate', bins=5, label='Employment Variation Rate',
+               title='Distribution of Employment Variation Rate')
 
+# Histogram of Euro bank interest rate
+histogram_plot(banking_data, 'euribor3m', bins=5, label='Interest Rate',
+               title='Distribution of Interest Rate')
 
+# Sort months and making it in order
+months = ['mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov',
+          'dec']
+banking_data['month'] = pd.Categorical(banking_data['month'], categories=months, ordered=True)
+
+# Plots consumer price index
+line_plot(banking_data.groupby(['month'], as_index=False)['cons.price.idx'].median(),
+          x='month',
+          y='cons.price.idx',
+          title='Trend of Consumer Price Index',
+          label='Month')
+
+# Plots consumer confidence index
+line_plot(banking_data.groupby(['month'], as_index=False)['cons.conf.idx'].median(),
+          x='month',
+          y='cons.conf.idx',
+          title='Trend of Consumer Confidence Index',
+          label='Month')
+
+# Plots consumer confidence index
+line_plot(banking_data.groupby(['month'], as_index=False)['nr.employed'].median(),
+          x='month',
+          y='nr.employed',
+          title='Trend of Number of Employed',
+          label='# of Employed')
 
 
 
