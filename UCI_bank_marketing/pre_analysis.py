@@ -27,11 +27,12 @@ for column in banking_data:
 
 
 # Given data, x, y (optional),# of bins, label, title, returns histogram
-def histogram_plot(data, x, bins, label, title, y=None):
+def histogram_plot(data, x, bins, label, title, y=None, category=None, color=None):
     """
     Function to plot a histogram given Pandas dataframe
     """
-    fig = px.histogram(data, x=x, y=y, nbins=bins,
+    fig = px.histogram(data, x=x, y=y, nbins=bins, color=color,
+                       category_orders=dict(job=category),
                        title=title,
                        labels={
                            x: label
@@ -40,10 +41,10 @@ def histogram_plot(data, x, bins, label, title, y=None):
     return fig.show()
 
 
-def scatter_plot(data, x, title, y=None):
+def scatter_plot(data, x, title, y=None, color=None, size=None):
     """Returns scatter plot"""
 
-    fig = px.scatter(data, x=x, y=y,
+    fig = px.scatter(data, x=x, y=y, color=color, size=size,
                      title=title)
 
     return fig.show()
@@ -116,26 +117,52 @@ line_plot(banking_data.groupby(['month'], as_index=False)['nr.employed'].median(
           title='Trend of Number of Employed',
           label='# of Employed')
 
+"""
+This Section is for the plotting the bar chart for the categorical variables
+"""
 
 
 # Histogram of Job
-fig = px.histogram(banking_data, x='job', nbins=10, color='job',
-                   title='Distribution of Job for Client Contacted by Bank',
-                   category_orders=dict(job=['housemaid', 'services', 'admin.', 'blue-collar', 'technician', 'retired',
-                                             'management', 'unemployed', 'self-employed', 'unknown', 'entrepreneur',
-                                             'student']),
-                   labels={
-                       'job': 'Job of the Person Contacted'
-                   }
-                   )
-fig.update_layout(bargap=0.2)
-fig.show()
+histogram_plot(banking_data, x='job', bins=10, color='job',
+               title='Distribution of Job for Client Contacted by Bank',
+               category=['housemaid', 'services', 'admin.', 'blue-collar', 'technician', 'retired',
+                         'management', 'unemployed', 'self-employed', 'unknown', 'entrepreneur',
+                         'student'],
+               label='Job of the Person Contacted')
 
+# Histogram of marital
+histogram_plot(banking_data, x='marital', bins=10, color='marital',
+               title='Distribution of Marital Status for Client Contacted by Bank',
+               category=['divorced', 'married', 'single', 'unknown'],
+               label='Marital Status')
 
+# Histogram of Education
+histogram_plot(banking_data, x='education', bins=10, color='education',
+               title='Distribution of Education for Client Contacted by Bank',
+               category=['basic.4y', 'basic.6y', 'basic.9y', 'high.school',
+                         'illiterate', 'professional.course', 'university.degree', 'unknown'],
+               label='Education Level')
 
+# Histogram of Default
+histogram_plot(banking_data, x='default', bins=10, color='default',
+               title='Distribution of Default Status for Client Contacted by Bank',
+               category=['no', 'yes', 'unknown'],
+               label='Previously Defaulted')
 
+# Histogram of housing loan
+histogram_plot(banking_data, x='housing', bins=10, color='housing',
+               title='Distribution of Marital Status for Client Contacted by Bank',
+               category=['no', 'yes', 'unknown'],
+               label='Have Housing Loan')
 
+# Histogram of loan type
+histogram_plot(banking_data, x='loan', bins=10, color='loan',
+               title='Distribution of Loan Type for Client Contacted by Bank',
+               category=['no', 'yes', 'unknown'],
+               label='Loan Type')
 
-
-
-
+# Histogram of Outcome
+histogram_plot(banking_data, x='y', bins=10, color='y',
+               title='Outcome of Term Deposit for Client Contacted by Bank',
+               category=['yes', 'no'],
+               label='Term Deposit')
