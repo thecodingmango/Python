@@ -27,25 +27,41 @@ for column in banking_data:
 
 
 # Given data, x, y (optional),# of bins, label, title, returns histogram
-def histogram_plot(data, x, bins, label, title, y=None, category=None, color=None):
+def histogram_plot(data, x, bins, label, title, y=None, category=None, color=None, pattern=None, marginal=None):
     """
     Function to plot a histogram given Pandas dataframe
     """
-    fig = px.histogram(data, x=x, y=y, nbins=bins, color=color,
+    fig = px.histogram(data,
+                       x=x,
+                       y=y,
+                       nbins=bins,
+                       color=color,
                        category_orders=dict(job=category),
                        title=title,
                        labels={
                            x: label
-                       })
+                       },
+                       pattern_shape=pattern,
+                       marginal=marginal)
     fig.update_layout(bargap=0.2)
     return fig.show()
 
 
-def scatter_plot(data, x, title, y=None, color=None, size=None):
+def scatter_plot(data, x, title, y=None, color=None, size=None, x_label=None, y_label=None):
     """Returns scatter plot"""
 
-    fig = px.scatter(data, x=x, y=y, color=color, size=size,
-                     title=title)
+    fig = px.scatter(
+        data,
+        x=x,
+        y=y,
+        color=color,
+        size=size,
+        title=title
+                     )
+    fig.update_layout(
+        xaxis_title=x_label,
+        yaxis_title=y_label
+    )
 
     return fig.show()
 
@@ -54,7 +70,9 @@ def line_plot(data, x, label, title, y=None):
     """
     Function to plot a histogram given Pandas dataframe
     """
-    fig = px.line(data, x=x, y=y,
+    fig = px.line(data,
+                  x=x,
+                  y=y,
                   title=title,
                   labels={
                       x: label
@@ -64,8 +82,8 @@ def line_plot(data, x, label, title, y=None):
 
 
 # Plotting histogram plots
-histogram_plot(banking_data, 'age', bins=30, label='Age of Client',
-               title='Distribution of Age for Client Contacted by Bank')
+histogram_plot(banking_data, x='age', bins=30, label='Age of Client', color='y',
+               title='Distribution of Age for Client Contacted by Bank', marginal='violin')
 
 # Histogram of Duration
 histogram_plot(banking_data, 'duration', bins=100, label='Duration of call',
@@ -88,7 +106,7 @@ histogram_plot(banking_data, 'emp.var.rate', bins=5, label='Employment Variation
                title='Distribution of Employment Variation Rate')
 
 # Histogram of Euro bank interest rate
-histogram_plot(banking_data, 'euribor3m', bins=5, label='Interest Rate',
+histogram_plot(banking_data, x='euribor3m', bins=100, label='Interest Rate', color='y',
                title='Distribution of Interest Rate')
 
 # Sort months and making it in order
@@ -110,7 +128,7 @@ line_plot(banking_data.groupby(['month'], as_index=False)['cons.conf.idx'].media
           title='Trend of Consumer Confidence Index',
           label='Month')
 
-# Plots consumer confidence index
+# Plots number of employed at the bank
 line_plot(banking_data.groupby(['month'], as_index=False)['nr.employed'].median(),
           x='month',
           y='nr.employed',
@@ -123,7 +141,7 @@ This Section is for the plotting the bar chart for the categorical variables
 
 
 # Histogram of Job
-histogram_plot(banking_data, x='job', bins=10, color='job',
+histogram_plot(banking_data, x='job', bins=10, color='y',
                title='Distribution of Job for Client Contacted by Bank',
                category=['housemaid', 'services', 'admin.', 'blue-collar', 'technician', 'retired',
                          'management', 'unemployed', 'self-employed', 'unknown', 'entrepreneur',
@@ -137,7 +155,7 @@ histogram_plot(banking_data, x='marital', bins=10, color='marital',
                label='Marital Status')
 
 # Histogram of Education
-histogram_plot(banking_data, x='education', bins=10, color='education',
+histogram_plot(banking_data, x='education', bins=10, color='y',
                title='Distribution of Education for Client Contacted by Bank',
                category=['basic.4y', 'basic.6y', 'basic.9y', 'high.school',
                          'illiterate', 'professional.course', 'university.degree', 'unknown'],
@@ -151,7 +169,7 @@ histogram_plot(banking_data, x='default', bins=10, color='default',
 
 # Histogram of housing loan
 histogram_plot(banking_data, x='housing', bins=10, color='housing',
-               title='Distribution of Marital Status for Client Contacted by Bank',
+               title='Distribution of Housing Loan Type for Client Contacted by Bank',
                category=['no', 'yes', 'unknown'],
                label='Have Housing Loan')
 
@@ -166,3 +184,9 @@ histogram_plot(banking_data, x='y', bins=10, color='y',
                title='Outcome of Term Deposit for Client Contacted by Bank',
                category=['yes', 'no'],
                label='Term Deposit')
+
+scatter_plot(banking_data, x=banking_data.groupby(['month'], as_index=False)['cons.price.idx'].median()['cons.price.idx'],
+             y=banking_data.groupby(['month'], as_index=False)['euribor3m'].median()['euribor3m'],
+             color=banking_data.groupby(['month'], as_index=False)['euribor3m'].median()['month'],
+             title='Scatter Plot Comparing CPI and Interest Rate by Month', x_label='Consumer Price Index',
+             y_label='Interest Rate')
