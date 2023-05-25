@@ -66,7 +66,7 @@ def scatter_plot(data, x, title, y=None, color=None, size=None, x_label=None, y_
     return fig.show()
 
 
-def line_plot(data, x, label, title, y=None):
+def line_plot(data, x, label, title, y=None, color=None):
     """
     Function to plot a histogram given Pandas dataframe
     """
@@ -74,6 +74,7 @@ def line_plot(data, x, label, title, y=None):
                   x=x,
                   y=y,
                   title=title,
+                  color=color,
                   labels={
                       x: label
                   })
