@@ -18,7 +18,7 @@ class DataProcessing:
 
     def rm_special_char(self):
 
-        self.bank_data = self.bank_data.replace(r'[.]', '', regex=True)
+        self.bank_data = self.bank_data.replace(r'\.$', '', regex=True)
         self.bank_data = self.bank_data.replace(r'[^\w\s]', '_', regex=True)
 
         return self.bank_data
