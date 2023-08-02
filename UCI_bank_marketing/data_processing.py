@@ -61,13 +61,29 @@ class DataProcessing:
 
         return self.bank_data
 
+    def normalization(self, data_column):
+        """Normalizes data using min and max value of the data"""
+
+        norm = (self.bank_data[data_column] - min(self.bank_data[data_column])) / \
+               (max(self.bank_data[data_column]) - min(self.bank_data[data_column]))
+
+        return norm
+
+    def standardization(self, data_column):
+        """Standardizes data using mean and standard deviation"""
+
+        standard = (self.bank_data[data_column] - self.bank_data[data_column].mean()) / \
+                   self.bank_data[data_column].std()
+
+        return standard
 
 
 # bank_data = pd.read_csv('data/bank-additional-full.csv', sep=";")
 data = DataProcessing()
 print(data.rm_special_char())
 test = data.categorical_encode()
-
+print(data.normalization('age'))
+print(data.standardization('age'))
 # data.categorical_to_numeric()
 # numeric_encoder = OneHotEncoder(handle_unknown='ignore')
 # transformed = numeric_encoder.fit_transform(bank_data['job']).toarray()
