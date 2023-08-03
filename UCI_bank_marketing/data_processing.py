@@ -28,6 +28,42 @@ class DataProcessing:
 
         return self.bank_data
 
+    def month_encode(self):
+        """
+        Encodes the month using numeric in strings
+        """
+
+        months = {'mar': '3', 'apr': '4', 'may': '5', 'jun': '6',
+                  'jul': '7', 'aug': '8', 'sep': '9', 'oct': '10', 'nov': '11', 'dec': '12'}
+
+        self.bank_data['month'] = self.bank_data['month'].map(months)
+
+        start_year = 2008
+        curr_month = 5
+        year_list = []
+
+        for _, row in self.bank_data.iterrows():
+
+            if int(row['month']) == curr_month:
+
+                year_list += [start_year]
+
+            elif int(row['month']) < curr_month:
+
+                start_year += 1
+                curr_month = int(row['month'])
+                year_list += [start_year]
+
+            if int(row['month']) > curr_month:
+
+                year_list += [start_year]
+                curr_month += 1
+
+
+        self.bank_data['year'] = year_list
+
+        return self.bank_data
+
     def categorical_encode(self):
         """
         Given a dataframe categories,
@@ -48,7 +84,7 @@ class DataProcessing:
                     self.bank_data[column] = le_encoder.fit_transform(self.bank_data[column])
 
                 # If the number of unique classes is greater than 2, then it converts to n classes
-                elif self.bank_data[column].nunique() > 2:
+                elif self.bank_data[column].nunique() > 2 and column != 'month':
 
                     oe_encoder = OneHotEncoder(handle_unknown='ignore')
 
@@ -80,11 +116,9 @@ class DataProcessing:
 
 # bank_data = pd.read_csv('data/bank-additional-full.csv', sep=";")
 data = DataProcessing()
-print(data.rm_special_char())
-test = data.categorical_encode()
-print(data.normalization('age'))
-print(data.standardization('age'))
-# data.categorical_to_numeric()
-# numeric_encoder = OneHotEncoder(handle_unknown='ignore')
-# transformed = numeric_encoder.fit_transform(bank_data['job']).toarray()
-# numeric_encoder.get_feature_names_out(['job'])
+#print(data.rm_special_char())
+#test = data.categorical_encode()
+test = data.month_encode()
+#print(data.normalization('age'))
+#print(data.standardization('age'))
+
