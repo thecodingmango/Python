@@ -59,7 +59,6 @@ class DataProcessing:
                 year_list += [start_year]
                 curr_month += 1
 
-
         self.bank_data['year'] = year_list
 
         return self.bank_data
@@ -91,6 +90,8 @@ class DataProcessing:
                     col_name = [column + '_' + name for name in sorted(self.bank_data[column].unique())]
                     new_df = pd.DataFrame(oe_encoder.fit_transform(self.bank_data[[column]]).toarray(),
                                           columns=col_name)
+                    new_df = new_df.drop(new_df.columns[0], axis=1)
+                    print(new_df.columns[0:])
 
                     self.bank_data = self.bank_data.drop(column, axis=1)
                     self.bank_data = pd.concat([new_df, self.bank_data], axis=1)
@@ -108,17 +109,32 @@ class DataProcessing:
     def standardization(self, data_column):
         """Standardizes data using mean and standard deviation"""
 
-        standard = (self.bank_data[data_column] - self.bank_data[data_column].mean()) / \
-                   self.bank_data[data_column].std()
+        standard = (self.bank_data[data_column] - self.bank_data[data_column].mean()) / self.bank_data[data_column].std()
 
         return standard
 
+    def preprocessing(self):
+
+        # Removes special characters
+        DataProcessing.rm_special_char(self)
+
+        # Encode categorical characters
+        DataProcessing.categorical_encode(self)
+
+        # Encode dates
+        DataProcessing.month_encode(self)
+
+        # Drop Duration column
+        self.bank_data = self.bank_data.drop("duration", axis=1)
+
+        return self.bank_data
+
 
 # bank_data = pd.read_csv('data/bank-additional-full.csv', sep=";")
-data = DataProcessing()
+#data = DataProcessing()
 #print(data.rm_special_char())
 #test = data.categorical_encode()
-test = data.month_encode()
+#test = data.preprocessing()
 #print(data.normalization('age'))
 #print(data.standardization('age'))
 
