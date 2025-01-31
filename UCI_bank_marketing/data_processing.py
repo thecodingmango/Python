@@ -3,9 +3,7 @@ This file will help to process the data before using it for logistic regression
 """
 import pandas as pd
 from pandas.api.types import is_object_dtype
-import numpy as np
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder, OrdinalEncoder
-
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 
 class DataProcessing:
 
@@ -33,8 +31,8 @@ class DataProcessing:
         Encodes the month using numeric in strings
         """
 
-        months = {'mar': '3', 'apr': '4', 'may': '5', 'jun': '6',
-                  'jul': '7', 'aug': '8', 'sep': '9', 'oct': '10', 'nov': '11', 'dec': '12'}
+        months = {'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+                  'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
 
         self.bank_data['month'] = self.bank_data['month'].map(months)
 
@@ -98,20 +96,18 @@ class DataProcessing:
 
         return self.bank_data
 
-    def normalization(self, data_column):
-        """Normalizes data using min and max value of the data"""
+    def min_max_scaler(self):
 
-        norm = (self.bank_data[data_column] - min(self.bank_data[data_column])) / \
-               (max(self.bank_data[data_column]) - min(self.bank_data[data_column]))
+        for column in self.bank_data.iloc[:, 1:]:
 
-        return norm
+            min_val = min(self.bank_data[column])
+            max_val = max(self.bank_data[column])
 
-    def standardization(self, data_column):
-        """Standardizes data using mean and standard deviation"""
+            scaled = (self.bank_data[column] - min_val)/(max_val - min_val)
 
-        standard = (self.bank_data[data_column] - self.bank_data[data_column].mean()) / self.bank_data[data_column].std()
+            self.bank_data[column] = scaled
 
-        return standard
+        return self.bank_data
 
     def preprocessing(self):
 
@@ -127,14 +123,17 @@ class DataProcessing:
         # Drop Duration column
         self.bank_data = self.bank_data.drop("duration", axis=1)
 
-        return self.bank_data
+        DataProcessing.min_max_scaler(self)
+
+        return pd.DataFrame(self.bank_data)
 
 
-# bank_data = pd.read_csv('data/bank-additional-full.csv', sep=";")
+#bank_data = pd.read_csv('data/bank-additional-full.csv', sep=";")
 #data = DataProcessing()
 #print(data.rm_special_char())
 #test = data.categorical_encode()
-#test = data.preprocessing()
+test = DataProcessing()
+test = test.preprocessing()
 #print(data.normalization('age'))
 #print(data.standardization('age'))
 
