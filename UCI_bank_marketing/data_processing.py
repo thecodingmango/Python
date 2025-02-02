@@ -5,6 +5,7 @@ import pandas as pd
 from pandas.api.types import is_object_dtype
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 
+
 class DataProcessing:
 
     def __init__(self):
@@ -53,7 +54,6 @@ class DataProcessing:
                 year_list += [start_year]
 
             if int(row['month']) > curr_month:
-
                 year_list += [start_year]
                 curr_month += 1
 
@@ -89,9 +89,9 @@ class DataProcessing:
                     new_df = pd.DataFrame(oe_encoder.fit_transform(self.bank_data[[column]]).toarray(),
                                           columns=col_name)
                     new_df = new_df.drop(new_df.columns[0], axis=1)
-                    print(new_df.columns[0:])
 
                     self.bank_data = self.bank_data.drop(column, axis=1)
+
                     self.bank_data = pd.concat([new_df, self.bank_data], axis=1)
 
         return self.bank_data
@@ -101,9 +101,10 @@ class DataProcessing:
         for column in self.bank_data.iloc[:, 1:]:
 
             min_val = min(self.bank_data[column])
+
             max_val = max(self.bank_data[column])
 
-            scaled = (self.bank_data[column] - min_val)/(max_val - min_val)
+            scaled = (self.bank_data[column] - min_val) / (max_val - min_val)
 
             self.bank_data[column] = scaled
 
@@ -127,13 +128,12 @@ class DataProcessing:
 
         return pd.DataFrame(self.bank_data)
 
-
-#bank_data = pd.read_csv('data/bank-additional-full.csv', sep=";")
-#data = DataProcessing()
-#print(data.rm_special_char())
-#test = data.categorical_encode()
-test = DataProcessing()
-test = test.preprocessing()
-#print(data.normalization('age'))
-#print(data.standardization('age'))
-
+# bank_data = pd.read_csv('data/bank-additional-full.csv', sep=";")
+# data = DataProcessing()
+# print(data.rm_special_char())
+# test = data.categorical_encode()
+#test2 = pd.read_csv('data/bank-additional-full.csv', sep=";")
+#test = DataProcessing()
+#test = test.preprocessing()
+# print(data.normalization('age'))
+# print(data.standardization('age'))
